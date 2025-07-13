@@ -2,7 +2,7 @@
 """
 Shared Data Management System with 2-Hour Global Countdown
 All users see the same data and countdown timer
-FIXED VERSION - Forces 2-hour refresh cycles
+YFINANCE ONLY VERSION - Using ONLY Yahoo Finance (no API keys needed)
 """
 
 import json
@@ -11,15 +11,165 @@ import threading
 import time
 from datetime import datetime, timedelta
 import logging
-from finnhub_fetcher import FinnhubDataManager
+import yfinance as yf
+import pandas as pd
+import numpy as np
 
 logger = logging.getLogger(__name__)
+
+class YahooFinanceDataManager:
+    """Yahoo Finance data manager - replacement for FinnhubDataManager"""
+    
+    def __init__(self):
+        self.cache_dir = "data/cache"
+        self.ensure_cache_directory()
+        logger.info("✅ Yahoo Finance Data Manager initialized")
+    
+    def ensure_cache_directory(self):
+        """Ensure cache directory exists"""
+        os.makedirs(self.cache_dir, exist_ok=True)
+    
+    def get_stock_data(self, symbol):
+        """Get stock data using Yahoo Finance"""
+        try:
+            # Try cache first
+            cached_data = self._load_cached_data(symbol)
+            if cached_data and self._is_cache_fresh(cached_data):
+                return cached_data
+            
+            # Fetch fresh data
+            fresh_data = self._fetch_from_yahoo(symbol)
+            if fresh_data:
+                self._cache_data(symbol, fresh_data)
+                return fresh_data
+            
+            # Return cached data if fresh fetch fails
+            return cached_data
+            
+        except Exception as e:
+            logger.error(f"❌ Error getting stock data for {symbol}: {e}")
+            return None
+    
+    def _fetch_from_yahoo(self, symbol):
+        """Fetch data from Yahoo Finance"""
+        try:
+            ticker = yf.Ticker(symbol)
+            
+            # Get historical data (1 year)
+            hist = ticker.history(period="1y")
+            if hist.empty:
+                return None
+            
+            # Get current info
+            info = ticker.info
+            current_price = hist['Close'].iloc[-1]
+            previous_close = hist['Close'].iloc[-2] if len(hist) > 1 else current_price
+            
+            # Format data
+            stock_data = {
+                'symbol': symbol,
+                'current_price': float(current_price),
+                'previous_close': float(previous_close),
+                'price_change': float(current_price - previous_close),
+                'price_change_percent': float(((current_price - previous_close) / previous_close) * 100),
+                'dates': [date.strftime('%Y-%m-%d') for date in hist.index],
+                'opens': [float(x) for x in hist['Open'].tolist()],
+                'highs': [float(x) for x in hist['High'].tolist()],
+                'lows': [float(x) for x in hist['Low'].tolist()],
+                'closes': [float(x) for x in hist['Close'].tolist()],
+                'volumes': [int(x) for x in hist['Volume'].tolist()],
+                'company_name': info.get('longName', symbol),
+                'sector': info.get('sector', 'Technology'),
+                'market_cap': info.get('marketCap', 0),
+                'pe_ratio': info.get('trailingPE'),
+                'high_52_week': float(hist['High'].max()),
+                'low_52_week': float(hist['Low'].min()),
+                'last_updated': datetime.now().isoformat(),
+                'cache_expires': (datetime.now() + timedelta(hours=2)).isoformat()
+            }
+            
+            logger.info(f"✅ Fetched data for {symbol} from Yahoo Finance")
+            return stock_data
+            
+        except Exception as e:
+            logger.error(f"❌ Error fetching {symbol} from Yahoo Finance: {e}")
+            return None
+    
+    def _load_cached_data(self, symbol):
+        """Load cached data from disk"""
+        try:
+            cache_file = os.path.join(self.cache_dir, f"{symbol}_yahoo.json")
+            if os.path.exists(cache_file):
+                with open(cache_file, 'r') as f:
+                    return json.load(f)
+        except Exception as e:
+            logger.error(f"❌ Error loading cached data for {symbol}: {e}")
+        return None
+    
+    def _cache_data(self, symbol, data):
+        """Cache data to disk"""
+        try:
+            cache_file = os.path.join(self.cache_dir, f"{symbol}_yahoo.json")
+            with open(cache_file, 'w') as f:
+                json.dump(data, f, indent=2)
+        except Exception as e:
+            logger.error(f"❌ Error caching data for {symbol}: {e}")
+    
+    def _is_cache_fresh(self, cached_data):
+        """Check if cached data is still fresh (within 2 hours)"""
+        try:
+            cache_expires = datetime.fromisoformat(cached_data.get('cache_expires', '2000-01-01'))
+            return datetime.now() < cache_expires
+        except:
+            return False
+    
+    def get_cache_status(self):
+        """Get cache status for all symbols"""
+        try:
+            cache_status = {}
+            
+            # Import symbols from config
+            import config
+            symbols = config.STOCK_SYMBOLS[:10]  # First 10 symbols
+            
+            for symbol in symbols:
+                cached_data = self._load_cached_data(symbol)
+                if cached_data:
+                    is_fresh = self._is_cache_fresh(cached_data)
+                    last_updated = datetime.fromisoformat(cached_data.get('last_updated', '2000-01-01'))
+                    age_hours = (datetime.now() - last_updated).total_seconds() / 3600
+                    
+                    cache_status[symbol] = {
+                        'cached': True,
+                        'is_fresh': is_fresh,
+                        'last_updated': cached_data.get('last_updated'),
+                        'age_hours': round(age_hours, 1)
+                    }
+                else:
+                    cache_status[symbol] = {
+                        'cached': False,
+                        'is_fresh': False,
+                        'age_hours': 0
+                    }
+            
+            return {
+                'cache_status': cache_status,
+                'total_symbols': len(symbols),
+                'cached_count': sum(1 for status in cache_status.values() if status['cached']),
+                'fresh_count': sum(1 for status in cache_status.values() if status['is_fresh'])
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ Error getting cache status: {e}")
+            return {'error': str(e)}
+
 
 class SharedDataManager:
     """Manages shared data state for all users with 2-hour countdown"""
     
     def __init__(self):
-        self.finnhub_manager = FinnhubDataManager()
+        # ✅ FIXED: Using Yahoo Finance instead of Finnhub
+        self.yahoo_manager = YahooFinanceDataManager()
         self.data_lock = threading.Lock()
         
         # Global state file
@@ -34,7 +184,7 @@ class SharedDataManager:
         # Start background refresh thread
         self._start_background_refresher()
         
-        logger.info("✅ Shared Data Manager initialized - 2 HOUR SYSTEM")
+        logger.info("✅ Shared Data Manager initialized - 2 HOUR SYSTEM with Yahoo Finance")
         logger.info(f"⏰ Next refresh: {self.next_refresh_time}")
     
     def _load_global_state(self):
@@ -83,6 +233,9 @@ class SharedDataManager:
                 'current_cycle_id': self.current_cycle_id,
                 'saved_at': datetime.now().isoformat()
             }
+            
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(self.state_file), exist_ok=True)
             
             with open(self.state_file, 'w') as f:
                 json.dump(state, f, indent=2)
@@ -170,10 +323,10 @@ class SharedDataManager:
                 
                 for symbol in symbols_to_refresh:
                     try:
-                        # Force fresh fetch from Finnhub (ignore cache)
-                        data = self.finnhub_manager._fetch_from_finnhub(symbol)
+                        # Force fresh fetch from Yahoo Finance (ignore cache)
+                        data = self.yahoo_manager._fetch_from_yahoo(symbol)
                         if data:
-                            self.finnhub_manager._cache_data(symbol, data)
+                            self.yahoo_manager._cache_data(symbol, data)
                             success_count += 1
                             logger.info(f"✅ Refreshed {symbol}")
                         else:
@@ -236,12 +389,12 @@ class SharedDataManager:
         logger.info("🔄 Background 2-hour refresher started")
     
     def get_shared_stock_data(self, symbol):
-        """Get shared stock data (same for all users)"""
-        return self.finnhub_manager.get_stock_data(symbol)
+        """Get shared stock data (same for all users) - FIXED: Using Yahoo Finance"""
+        return self.yahoo_manager.get_stock_data(symbol)
     
     def get_cache_status(self):
         """Get comprehensive cache status"""
-        finnhub_status = self.finnhub_manager.get_cache_status()
+        yahoo_status = self.yahoo_manager.get_cache_status()
         countdown_info = self.get_countdown_info()
         
         return {
@@ -252,8 +405,8 @@ class SharedDataManager:
                 'refresh_cycle_hours': 2  # ✅ ALWAYS 2 HOURS
             },
             'countdown': countdown_info,
-            'finnhub_cache': finnhub_status,
-            'system_status': 'All users see the same data - 2 hour refresh cycle'
+            'yahoo_cache': yahoo_status,
+            'system_status': 'All users see the same data - 2 hour refresh cycle - Yahoo Finance'
         }
     
     def force_refresh_now(self):
