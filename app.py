@@ -1274,4 +1274,11 @@ def get_system_info():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    # Use Gunicorn in production, Flask dev server locally
+    import os
+    if os.environ.get('RAILWAY_ENVIRONMENT'):
+        # Railway deployment - use Gunicorn
+        os.system(f'gunicorn --bind 0.0.0.0:{port} --workers 1 --timeout 120 app:app')
+    else:
+        # Local development
+        app.run(host='0.0.0.0', port=port, debug=False)
