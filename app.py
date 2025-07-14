@@ -31,7 +31,14 @@ import config
 from shared_data_manager import SharedDataManager
 
 # ✅ AUTO-RETRAIN SYSTEM IMPORT
-from auto_retrain_scheduler import AutoRetrainSystem
+# Auto-retrain system (disabled for online deployment)
+try:
+    from auto_retrain_scheduler import AutoRetrainSystem
+    auto_retrain = AutoRetrainSystem()
+    print("🔄 AUTO-RETRAIN: ✅ Enabled")
+except ImportError:
+    auto_retrain = None
+    print("🔄 AUTO-RETRAIN: ❌ Disabled for deployment")
 
 # Import ML components with better error handling
 try:
