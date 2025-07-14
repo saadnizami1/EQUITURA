@@ -55,7 +55,9 @@ except ImportError as e:
     tf = None
 
 # Initialize Flask app
-app = Flask(__name__, template_folder='web_app/templates')
+app = Flask(__name__, 
+            template_folder='web_app/templates',
+            static_folder='web_app/static')
 CORS(app)
 
 # Configure logging
