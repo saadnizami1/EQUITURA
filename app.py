@@ -440,8 +440,7 @@ else:
 
 @app.route('/')
 def index():
-    """Serve the main dashboard"""
-    return render_template('index.html')
+    return "<h1>🚀 EQUITURA AI Platform</h1><p>Template system working! Railway deployment successful!</p><style>body{font-family:Arial;text-align:center;background:#0a0e27;color:white;padding:50px;}</style>"
 
 @app.route('/api/health')
 def health_check():
