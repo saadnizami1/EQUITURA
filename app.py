@@ -440,10 +440,9 @@ else:
 
 @app.route('/')
 def index():
-    return "<h1>🚀 EQUITURA AI Platform</h1><p>Template system working! Railway deployment successful!</p><style>body{font-family:Arial;text-align:center;background:#0a0e27;color:white;padding:50px;}</style>"
-
-@app.route('/api/health')
+    return render_template('index.html')
 def health_check():
+    
     """API health check with shared data info"""
     cache_status = shared_data_manager.get_cache_status()
     countdown_info = shared_data_manager.get_countdown_info()
