@@ -1098,949 +1098,486 @@
     </div>
 
     <script>
-        let currentStock = 'AAPL';
-        let currentSector = 'All';
+        // EQUITURA - Railway Production JavaScript
+// Simplified and optimized for Railway deployment
+
+let currentStock = 'AAPL';
+let isLoading = false;
+
+// Stock data with sectors
+const allStocks = [
+    // Technology
+    { symbol: 'AAPL', sector: 'Technology', name: 'Apple Inc' },
+    { symbol: 'MSFT', sector: 'Technology', name: 'Microsoft Corp' },
+    { symbol: 'GOOGL', sector: 'Technology', name: 'Alphabet Inc' },
+    { symbol: 'AMZN', sector: 'Technology', name: 'Amazon.com Inc' },
+    { symbol: 'TSLA', sector: 'Technology', name: 'Tesla Inc' },
+    { symbol: 'NVDA', sector: 'Technology', name: 'NVIDIA Corp' },
+    { symbol: 'META', sector: 'Technology', name: 'Meta Platforms Inc' },
+    { symbol: 'NFLX', sector: 'Technology', name: 'Netflix Inc' },
+    
+    // Financial
+    { symbol: 'JPM', sector: 'Financial', name: 'JPMorgan Chase' },
+    { symbol: 'V', sector: 'Financial', name: 'Visa Inc' },
+    { symbol: 'BAC', sector: 'Financial', name: 'Bank of America' },
+    { symbol: 'WFC', sector: 'Financial', name: 'Wells Fargo' },
+    
+    // Consumer
+    { symbol: 'DIS', sector: 'Consumer', name: 'Walt Disney' },
+    { symbol: 'NKE', sector: 'Consumer', name: 'Nike Inc' },
+    { symbol: 'SBUX', sector: 'Consumer', name: 'Starbucks Corp' },
+    
+    // Healthcare
+    { symbol: 'JNJ', sector: 'Healthcare', name: 'Johnson & Johnson' },
+    { symbol: 'PFE', sector: 'Healthcare', name: 'Pfizer Inc' },
+    
+    // Energy
+    { symbol: 'XOM', sector: 'Energy', name: 'Exxon Mobil' },
+    
+    // Industrial
+    { symbol: 'BA', sector: 'Industrial', name: 'Boeing Co' },
+    
+    // Consumer Staples
+    { symbol: 'KO', sector: 'Consumer Staples', name: 'Coca-Cola' },
+    { symbol: 'PG', sector: 'Consumer Staples', name: 'Procter & Gamble' },
+    
+    // Communication
+    { symbol: 'T', sector: 'Communication', name: 'AT&T Inc' },
+    { symbol: 'VZ', sector: 'Communication', name: 'Verizon' }
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
+});
+
+function initializeApp() {
+    initializeStockSelector();
+    loadStockData(currentStock);
+    updateCountdown();
+    
+    // Update countdown every minute
+    setInterval(updateCountdown, 60000);
+}
+
+function initializeStockSelector() {
+    const selector = document.getElementById('stockSelector');
+    if (!selector) return;
+    
+    selector.innerHTML = '';
+    
+    allStocks.forEach(stockInfo => {
+        const button = document.createElement('button');
+        button.className = `stock-btn ${stockInfo.symbol === currentStock ? 'active' : ''}`;
+        button.innerHTML = `
+            ${stockInfo.symbol}
+            <div class="stock-sector">${stockInfo.sector.substring(0, 4)}</div>
+        `;
+        button.onclick = () => selectStock(stockInfo.symbol);
+        selector.appendChild(button);
+    });
+}
+
+function selectStock(symbol) {
+    if (isLoading) return; // Prevent multiple calls
+    
+    currentStock = symbol;
+    
+    // Update active button
+    document.querySelectorAll('.stock-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.trim().startsWith(symbol));
+    });
+    
+    loadStockData(symbol);
+}
+
+async function loadStockData(symbol) {
+    if (isLoading) return;
+    
+    try {
+        isLoading = true;
+        showLoading();
         
-        // ✅ NEW: Enhanced stock list with all new stocks and sectors
-        const allStocks = [
-            // Technology
-            { symbol: 'AAPL', sector: 'Technology', name: 'Apple Inc' },
-            { symbol: 'MSFT', sector: 'Technology', name: 'Microsoft Corp' },
-            { symbol: 'GOOGL', sector: 'Technology', name: 'Alphabet Inc' },
-            { symbol: 'AMZN', sector: 'Technology', name: 'Amazon.com Inc' },
-            { symbol: 'META', sector: 'Technology', name: 'Meta Platforms Inc' },
-            { symbol: 'NVDA', sector: 'Technology', name: 'NVIDIA Corp' },
-            { symbol: 'NFLX', sector: 'Technology', name: 'Netflix Inc' },
-            { symbol: 'ORCL', sector: 'Technology', name: 'Oracle Corp' },
-            { symbol: 'BABA', sector: 'Technology', name: 'Alibaba Group' },
-            { symbol: 'PYPL', sector: 'Technology', name: 'PayPal Holdings' },
-            
-            // Financial Services
-            { symbol: 'JPM', sector: 'Financial Services', name: 'JPMorgan Chase' },
-            { symbol: 'V', sector: 'Financial Services', name: 'Visa Inc' },
-            { symbol: 'BAC', sector: 'Financial Services', name: 'Bank of America' },
-            { symbol: 'WFC', sector: 'Financial Services', name: 'Wells Fargo' },
-            { symbol: 'AXP', sector: 'Financial Services', name: 'American Express' },
-            
-            // Consumer Discretionary
-            { symbol: 'TSLA', sector: 'Consumer Discretionary', name: 'Tesla Inc' },
-            { symbol: 'DIS', sector: 'Consumer Discretionary', name: 'Walt Disney' },
-            { symbol: 'NKE', sector: 'Consumer Discretionary', name: 'Nike Inc' },
-            { symbol: 'SBUX', sector: 'Consumer Discretionary', name: 'Starbucks Corp' },
-            { symbol: 'F', sector: 'Consumer Discretionary', name: 'Ford Motor' },
-            { symbol: 'GM', sector: 'Consumer Discretionary', name: 'General Motors' },
-            
-            // Healthcare
-            { symbol: 'PFE', sector: 'Healthcare', name: 'Pfizer Inc' },
-            { symbol: 'JNJ', sector: 'Healthcare', name: 'Johnson & Johnson' },
-            { symbol: 'UNH', sector: 'Healthcare', name: 'UnitedHealth Group' },
-            
-            // Energy
-            { symbol: 'XOM', sector: 'Energy', name: 'Exxon Mobil' },
-            { symbol: 'CLR', sector: 'Energy', name: 'Continental Resources' },
-            
-            // Industrials
-            { symbol: 'BA', sector: 'Industrials', name: 'Boeing Co' },
-            { symbol: 'LMT', sector: 'Industrials', name: 'Lockheed Martin' },
-            
-            // Materials
-            { symbol: 'X', sector: 'Materials', name: 'US Steel Corp' },
-            { symbol: 'APD', sector: 'Materials', name: 'Air Products' },
-            { symbol: 'RGLD', sector: 'Materials', name: 'Royal Gold' },
-            
-            // Consumer Staples
-            { symbol: 'KO', sector: 'Consumer Staples', name: 'Coca-Cola' },
-            { symbol: 'PG', sector: 'Consumer Staples', name: 'Procter & Gamble' },
-            
-            // Communication Services
-            { symbol: 'T', sector: 'Communication Services', name: 'AT&T Inc' },
-            { symbol: 'VZ', sector: 'Communication Services', name: 'Verizon' }
+        console.log(`📊 Loading data for ${symbol}...`);
+        
+        // Load basic stock data
+        const stockResponse = await fetch(`/api/stock/${symbol}`);
+        if (!stockResponse.ok) {
+            throw new Error(`Stock API failed: ${stockResponse.status}`);
+        }
+        
+        const stockData = await stockResponse.json();
+        if (stockData.error) {
+            throw new Error(stockData.error);
+        }
+        
+        updatePriceDisplay(stockData);
+        console.log(`✅ Stock data loaded for ${symbol}`);
+        
+        // Load technical analysis
+        try {
+            const technicalResponse = await fetch(`/api/stock/${symbol}/technical`);
+            if (technicalResponse.ok) {
+                const technicalData = await technicalResponse.json();
+                if (!technicalData.error) {
+                    updateTechnicalAnalysis(technicalData);
+                    updateCharts(stockData, technicalData);
+                    console.log(`✅ Technical analysis loaded for ${symbol}`);
+                }
+            }
+        } catch (techError) {
+            console.warn(`⚠️ Technical analysis failed for ${symbol}:`, techError);
+        }
+        
+        // Load predictions
+        try {
+            const predResponse = await fetch(`/api/stock/${symbol}/predictions`);
+            if (predResponse.ok) {
+                const predData = await predResponse.json();
+                if (!predData.error) {
+                    updatePredictions(predData);
+                    console.log(`✅ Predictions loaded for ${symbol}`);
+                }
+            }
+        } catch (predError) {
+            console.warn(`⚠️ Predictions failed for ${symbol}:`, predError);
+        }
+        
+    } catch (error) {
+        console.error(`❌ Error loading ${symbol}:`, error);
+        showError(`Failed to load data for ${symbol}: ${error.message}`);
+    } finally {
+        isLoading = false;
+        hideLoading();
+    }
+}
+
+function updatePriceDisplay(data) {
+    const currentPrice = document.getElementById('currentPrice');
+    const priceChange = document.getElementById('priceChange');
+    const companyInfo = document.getElementById('companyInfo');
+    const priceStats = document.getElementById('priceStats');
+    
+    if (!currentPrice) return;
+    
+    // Update price
+    currentPrice.textContent = `$${data.current_price.toFixed(2)}`;
+    
+    // Update change
+    const changeIcon = data.price_change >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+    const changeClass = data.price_change >= 0 ? 'positive' : 'negative';
+    
+    if (priceChange) {
+        priceChange.innerHTML = `
+            <i class="fas ${changeIcon}"></i>
+            <span>$${Math.abs(data.price_change).toFixed(2)} (${Math.abs(data.price_change_percent).toFixed(2)}%)</span>
+        `;
+        priceChange.className = `price-change ${changeClass}`;
+    }
+    
+    // Update company info
+    if (companyInfo) {
+        companyInfo.innerHTML = `
+            <strong>${data.company_name || data.symbol}</strong><br>
+            Sector: ${data.sector || 'Technology'} • ${data.symbol}
+        `;
+    }
+    
+    // Update stats
+    if (priceStats) {
+        priceStats.innerHTML = `
+            <div class="stat-item">
+                <div class="stat-label">Volume</div>
+                <div class="stat-value">${formatVolume(data.volume)}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">52W High</div>
+                <div class="stat-value">$${data.high_52_week.toFixed(2)}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">52W Low</div>
+                <div class="stat-value">$${data.low_52_week.toFixed(2)}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Market Cap</div>
+                <div class="stat-value">${formatMarketCap(data.market_cap)}</div>
+            </div>
+        `;
+    }
+}
+
+function updateTechnicalAnalysis(data) {
+    // Update technical indicators
+    const indicatorsGrid = document.getElementById('indicatorsGrid');
+    if (indicatorsGrid) {
+        const indicators = [
+            { name: 'RSI (14)', value: data.rsi, format: 'decimal' },
+            { name: 'MACD', value: data.macd, format: 'decimal' },
+            { name: 'MACD Signal', value: data.macd_signal, format: 'decimal' },
+            { name: 'SMA 20', value: data.sma_20, format: 'price' },
+            { name: 'SMA 50', value: data.sma_50, format: 'price' }
         ];
         
-        // Global countdown management
-        let countdownInterval;
-        let lastCountdownData = null;
-
-        // Global variables for ML predictions
-        let mlPredictionsData = null;
-
-        // ✅ OPTIMIZED DOM CONTENT LOADED
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeStockSelector();
-            loadStockData(currentStock);
-            updateCountdown();
-            
-            // ✅ OPTIMIZED INTERVALS
-            // Update countdown from server every 60 seconds (instead of 10)
-            setInterval(updateCountdown, 60000);
-            
-            // ✅ DATA REFRESH EVERY 2 HOURS
-            setInterval(() => {
-                console.log('🔄 2-hour interval check - refreshing data');
-                if (currentStock) {
-                    loadStockData(currentStock);
+        indicatorsGrid.innerHTML = '';
+        indicators.forEach(indicator => {
+            if (indicator.value !== null && indicator.value !== undefined && indicator.value !== 0) {
+                const div = document.createElement('div');
+                div.className = 'indicator';
+                
+                let formattedValue = indicator.value;
+                if (indicator.format === 'price') {
+                    formattedValue = `$${indicator.value.toFixed(2)}`;
+                } else if (indicator.format === 'decimal') {
+                    formattedValue = indicator.value.toFixed(2);
                 }
-            }, 7200000); // 2 hours
-        });
-
-        // ✅ CLEANUP ON PAGE UNLOAD
-        window.addEventListener('beforeunload', function() {
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-            }
-        });
-
-        // ✅ NEW: About Modal Functions
-        function openAboutModal() {
-            document.getElementById('aboutModal').style.display = 'flex';
-        }
-
-        function closeAboutModal() {
-            document.getElementById('aboutModal').style.display = 'none';
-        }
-
-        // Close modal when clicking outside
-        document.getElementById('aboutModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeAboutModal();
-            }
-        });
-
-        // ✅ NEW: Sector Filter Functions
-        function filterBySector(sector) {
-            currentSector = sector;
-            
-            // Update active sector button
-            document.querySelectorAll('.sector-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-sector') === sector);
-            });
-            
-            // Filter and display stocks
-            initializeStockSelector();
-        }
-
-        function getFilteredStocks() {
-            if (currentSector === 'All') {
-                return allStocks;
-            }
-            return allStocks.filter(stock => stock.sector === currentSector);
-        }
-
-        function initializeStockSelector() {
-            const selector = document.getElementById('stockSelector');
-            selector.innerHTML = '';
-            
-            const filteredStocks = getFilteredStocks();
-            
-            filteredStocks.forEach(stockInfo => {
-                const button = document.createElement('button');
-                button.className = `stock-btn ${stockInfo.symbol === currentStock ? 'active' : ''}`;
-                button.innerHTML = `
-                    ${stockInfo.symbol}
-                    <div class="stock-sector">${stockInfo.sector.substring(0, 4)}</div>
+                
+                div.innerHTML = `
+                    <span class="indicator-name">${indicator.name}</span>
+                    <span class="indicator-value">${formattedValue}</span>
                 `;
-                button.onclick = () => selectStock(stockInfo.symbol);
-                selector.appendChild(button);
-            });
-            
-            // If current stock is not in filtered list, select first available
-            if (!filteredStocks.find(s => s.symbol === currentStock) && filteredStocks.length > 0) {
-                selectStock(filteredStocks[0].symbol);
+                indicatorsGrid.appendChild(div);
             }
+        });
+    }
+    
+    // Update trading signals
+    if (data.signals) {
+        updateTradingSignals(data.signals);
+    }
+}
+
+function updateTradingSignals(signals) {
+    const container = document.getElementById('signalsContainer');
+    if (!container || !signals.individual_signals) return;
+    
+    container.innerHTML = '';
+    
+    // Individual signals
+    Object.entries(signals.individual_signals).forEach(([indicator, signal]) => {
+        const card = document.createElement('div');
+        let signalClass = 'signal-hold';
+        
+        if (signal.toLowerCase().includes('buy')) {
+            signalClass = 'signal-buy';
+        } else if (signal.toLowerCase().includes('sell')) {
+            signalClass = 'signal-sell';
         }
-
-        function selectStock(symbol) {
-            currentStock = symbol;
-            
-            document.querySelectorAll('.stock-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.trim().startsWith(symbol));
-            });
-            
-            loadStockData(symbol);
+        
+        card.className = `signal-card ${signalClass}`;
+        card.innerHTML = `
+            <div class="signal-indicator-name">${indicator.replace('_', ' ').toUpperCase()}</div>
+            <div class="signal-value">${signal}</div>
+        `;
+        
+        container.appendChild(card);
+    });
+    
+    // Overall recommendation
+    if (signals.recommendation) {
+        const overallCard = document.createElement('div');
+        let recClass = 'signal-hold';
+        
+        if (signals.recommendation.toLowerCase().includes('buy')) {
+            recClass = 'signal-buy';
+        } else if (signals.recommendation.toLowerCase().includes('sell')) {
+            recClass = 'signal-sell';
         }
+        
+        overallCard.className = `signal-card ${recClass} overall-signal`;
+        overallCard.innerHTML = `
+            <div class="signal-indicator-name">OVERALL RECOMMENDATION</div>
+            <div class="signal-value">${signals.recommendation}</div>
+            <div class="overall-details">
+                Confidence: ${signals.confidence}% • Strength: ${signals.signal_strength}
+            </div>
+        `;
+        
+        container.appendChild(overallCard);
+    }
+}
 
-        // ✅ OPTIMIZED DATA LOADING - FASTER RESPONSE
-        async function loadStockData(symbol) {
-            try {
-                console.log(`📊 Loading data for ${symbol}...`);
-                
-                // ✅ FAST PARALLEL LOADING
-                const promises = [
-                    fetch(`/api/stock/${symbol}`).then(r => r.json()).catch(err => ({error: err.message})),
-                    fetch(`/api/stock/${symbol}/technical`).then(r => r.json()).catch(err => ({error: err.message})),
-                    fetch(`/api/stock/${symbol}/predictions`).then(r => r.json()).catch(err => ({error: err.message}))
-                ];
+function updateCharts(stockData, technicalData) {
+    if (!window.Plotly) return;
+    
+    try {
+        updatePriceChart(stockData, technicalData);
+        updateTechnicalChart(technicalData);
+    } catch (error) {
+        console.error('Chart update error:', error);
+    }
+}
 
-                const [stockData, technicalData, predictions] = await Promise.allSettled(promises);
+function updatePriceChart(stockData, technicalData) {
+    const chartContainer = document.getElementById('priceChart');
+    if (!chartContainer || !stockData.chart_data) return;
+    
+    const traces = [{
+        x: stockData.chart_data.dates,
+        y: stockData.chart_data.prices,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Price',
+        line: { color: '#3B82F6', width: 3 }
+    }];
+    
+    if (technicalData && technicalData.sma_20 > 0) {
+        // Add SMA line (simplified)
+        const smaData = stockData.chart_data.dates.map(() => technicalData.sma_20);
+        traces.push({
+            x: stockData.chart_data.dates,
+            y: smaData,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'SMA 20',
+            line: { color: '#10B981', width: 2 }
+        });
+    }
+    
+    const layout = {
+        title: { text: `${currentStock} Price Chart`, font: { color: '#E5E7EB', size: 16 } },
+        xaxis: { title: 'Date', color: '#9CA3AF' },
+        yaxis: { title: 'Price ($)', color: '#9CA3AF' },
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#E5E7EB' },
+        showlegend: true,
+        margin: { t: 50, r: 60, b: 50, l: 60 }
+    };
+    
+    Plotly.newPlot('priceChart', traces, layout, { responsive: true, displayModeBar: false });
+}
 
-                // ✅ IMMEDIATE UI UPDATES
-                if (stockData.status === 'fulfilled' && !stockData.value.error) {
-                    updatePriceDisplay(stockData.value);
-                    console.log('✅ Stock data loaded');
-                }
-
-                if (technicalData.status === 'fulfilled' && !technicalData.value.error) {
-                    updateTechnicalIndicators(technicalData.value);
-                    updateTradingSignals(technicalData.value);
-                    console.log('✅ Technical data loaded');
-                    
-                    // ✅ FAST CHART UPDATES
-                    if (stockData.status === 'fulfilled' && !stockData.value.error) {
-                        requestAnimationFrame(() => {
-                            updateCharts(stockData.value, technicalData.value);
-                        });
-                    }
-                }
-
-                if (predictions.status === 'fulfilled' && !predictions.value.error) {
-                    updatePredictions(predictions.value);
-                    console.log('✅ Predictions loaded');
-                }
-                
-                // Load ML predictions
-                await loadMLPredictions(symbol);
-                
-            } catch (error) {
-                console.error('💥 Error loading data:', error);
-            }
+function updateTechnicalChart(data) {
+    const chartContainer = document.getElementById('technicalChart');
+    if (!chartContainer || !data.chart_data) return;
+    
+    const traces = [
+        {
+            x: data.chart_data.dates,
+            y: data.chart_data.rsi,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'RSI',
+            line: { color: '#10B981', width: 3 },
+            yaxis: 'y'
+        },
+        {
+            x: data.chart_data.dates,
+            y: data.chart_data.macd,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'MACD',
+            line: { color: '#3B82F6', width: 2 },
+            yaxis: 'y2'
         }
+    ];
+    
+    const layout = {
+        title: { text: 'RSI & MACD Analysis', font: { color: '#E5E7EB', size: 16 } },
+        xaxis: { title: 'Date', color: '#9CA3AF' },
+        yaxis: { title: 'RSI', color: '#9CA3AF', side: 'left', range: [0, 100] },
+        yaxis2: { title: 'MACD', color: '#9CA3AF', side: 'right', overlaying: 'y' },
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#E5E7EB' },
+        showlegend: true,
+        margin: { t: 50, r: 60, b: 50, l: 60 }
+    };
+    
+    Plotly.newPlot('technicalChart', traces, layout, { responsive: true, displayModeBar: false });
+}
 
-        // ✅ UPDATED PRICE DISPLAY - WITH SECTOR INFO
-        function updatePriceDisplay(data) {
-            const currentPrice = document.getElementById('currentPrice');
-            const priceChange = document.getElementById('priceChange');
-            const companyInfo = document.getElementById('companyInfo');
-            const priceStats = document.getElementById('priceStats');
-            
-            if (!data || data.error) {
-                showError('Unable to load stock data');
-                return;
-            }
-            
-            currentPrice.textContent = `$${data.current_price.toFixed(2)}`;
-            
-            const changeIcon = data.price_change >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
-            const changeClass = data.price_change >= 0 ? 'positive' : 'negative';
-            
-            priceChange.innerHTML = `
-                <i class="fas ${changeIcon}"></i>
-                <span>$${Math.abs(data.price_change).toFixed(2)} (${Math.abs(data.price_change_percent).toFixed(2)}%)</span>
-            `;
-            priceChange.className = `price-change ${changeClass}`;
-            
-            // ✅ ENHANCED: Include sector information
-            companyInfo.innerHTML = `
-                <strong>${data.company_name || data.symbol}</strong><br>
-                Sector: ${data.sector || 'Technology'} • ${data.symbol}
-            `;
+function updatePredictions(data) {
+    const grid = document.getElementById('predictionsGrid');
+    if (!grid || !data.predictions) return;
+    
+    grid.innerHTML = '';
+    
+    Object.entries(data.predictions).forEach(([timeframe, pred]) => {
+        const card = document.createElement('div');
+        card.className = 'prediction-card';
+        
+        const returnPercent = pred.predicted_return || 0;
+        const direction = returnPercent >= 0 ? 'positive' : 'negative';
+        
+        card.innerHTML = `
+            <div class="prediction-timeframe">${pred.timeframe} Prediction</div>
+            <div class="prediction-price ${direction}">$${pred.predicted_price}</div>
+            <div class="prediction-return ${direction}">${returnPercent > 0 ? '+' : ''}${returnPercent.toFixed(2)}%</div>
+            <div class="prediction-confidence">${pred.confidence}% Confidence</div>
+            <div class="prediction-details">
+                Direction: <strong>${pred.direction}</strong><br>
+                Model: Technical Analysis AI
+            </div>
+        `;
+        
+        grid.appendChild(card);
+    });
+}
 
-            priceStats.innerHTML = `
-                <div class="stat-item">
-                    <div class="stat-label">Volume</div>
-                    <div class="stat-value">${formatVolume(data.volume)}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">52W High</div>
-                    <div class="stat-value">$${(data.high_52_week || data.current_price).toFixed(2)}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">52W Low</div>
-                    <div class="stat-value">$${(data.low_52_week || data.current_price).toFixed(2)}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">P/E Ratio</div>
-                    <div class="stat-value">${data.pe_ratio ? data.pe_ratio.toFixed(1) : 'N/A'}</div>
-                </div>
-            `;
+async function updateCountdown() {
+    try {
+        const response = await fetch('/api/countdown');
+        const data = await response.json();
+        
+        const countdownDisplay = document.getElementById('countdownDisplay');
+        if (countdownDisplay && data.countdown_text) {
+            countdownDisplay.textContent = data.countdown_text;
         }
+    } catch (error) {
+        console.warn('Countdown update failed:', error);
+    }
+}
 
-        // ✅ UPDATED CHARTS - NO LOADING INDICATORS
-        function updateCharts(stockData, technicalData) {
-            try {
-                // ✅ DIRECT CHART UPDATE - NO DELAYS OR LOADING
-                updatePriceChart(stockData, technicalData);
-                
-                if (technicalData && technicalData.chart_data) {
-                    updateTechnicalChart(technicalData);
-                }
-                
-            } catch (error) {
-                console.error('Error updating charts:', error);
-            }
+function showLoading() {
+    const elements = ['currentPrice', 'priceChange', 'companyInfo'];
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.opacity = '0.5';
         }
+    });
+}
 
-        // ✅ UPDATED PRICE CHART - NO LOADING STATES
-        function updatePriceChart(stockData, technicalData) {
-            if (!stockData || !stockData.chart_data) {
-                console.log('No stock data for price chart');
-                return;
-            }
-            
-            const chartContainer = document.getElementById('priceChart');
-            if (!chartContainer) return;
-            
-            // ✅ NO LOADING INDICATOR - DIRECT CHART RENDER
-            const traces = [
-                {
-                    x: stockData.chart_data.dates,
-                    y: stockData.chart_data.prices,
-                    type: 'scatter',
-                    mode: 'lines',
-                    name: 'Price',
-                    line: { color: '#3B82F6', width: 3 }
-                }
-            ];
-
-            if (technicalData && technicalData.chart_data) {
-                if (technicalData.chart_data.sma_20 && technicalData.chart_data.sma_20.some(v => v > 0)) {
-                    traces.push({
-                        x: technicalData.chart_data.dates,
-                        y: technicalData.chart_data.sma_20,
-                        type: 'scatter',
-                        mode: 'lines',
-                        name: 'SMA 20',
-                        line: { color: '#10B981', width: 2 }
-                    });
-                }
-
-                if (technicalData.chart_data.sma_50 && technicalData.chart_data.sma_50.some(v => v > 0)) {
-                    traces.push({
-                        x: technicalData.chart_data.dates,
-                        y: technicalData.chart_data.sma_50,
-                        type: 'scatter',
-                        mode: 'lines',
-                        name: 'SMA 50',
-                        line: { color: '#F59E0B', width: 2 }
-                    });
-                }
-            }
-
-            const layout = {
-                title: {
-                    text: `${currentStock} Price Chart`,
-                    font: { color: '#E5E7EB', size: 16 }
-                },
-                xaxis: { 
-                    title: 'Date', 
-                    color: '#9CA3AF',
-                    gridcolor: '#374151',
-                    showgrid: true
-                },
-                yaxis: { 
-                    title: 'Price ($)', 
-                    color: '#9CA3AF',
-                    gridcolor: '#374151',
-                    showgrid: true
-                },
-                plot_bgcolor: 'rgba(0,0,0,0)',
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                font: { color: '#E5E7EB' },
-                showlegend: true,
-                legend: { 
-                    x: 1.02,
-                    y: 1,
-                    xanchor: 'left',
-                    bgcolor: 'rgba(30, 41, 59, 0.8)',
-                    bordercolor: '#374151',
-                    borderwidth: 1,
-                    font: { color: '#E5E7EB', size: 11 }
-                },
-                margin: { t: 50, r: 120, b: 50, l: 60 },
-                hovermode: 'x unified'
-            };
-
-            const config = {
-                responsive: true,
-                displayModeBar: false,
-                showTips: false
-            };
-
-            // ✅ DIRECT RENDER - NO LOADING STATES
-            Plotly.newPlot('priceChart', traces, layout, config);
+function hideLoading() {
+    const elements = ['currentPrice', 'priceChange', 'companyInfo'];
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.opacity = '1';
         }
+    });
+}
 
-        // ✅ UPDATED TECHNICAL CHART - NO LOADING STATES
-        function updateTechnicalChart(data) {
-            if (!data.chart_data) {
-                console.log('No technical data for chart');
-                return;
-            }
-            
-            const chartContainer = document.getElementById('technicalChart');
-            if (!chartContainer) return;
-            
-            // ✅ NO LOADING INDICATOR - DIRECT CHART RENDER
-            const rsiTrace = {
-                x: data.chart_data.dates,
-                y: data.chart_data.rsi,
-                type: 'scatter',
-                mode: 'lines',
-                name: 'RSI',
-                line: { color: '#10B981', width: 3 },
-                yaxis: 'y'
-            };
+function showError(message) {
+    console.error(message);
+    
+    const currentPrice = document.getElementById('currentPrice');
+    const companyInfo = document.getElementById('companyInfo');
+    
+    if (currentPrice) {
+        currentPrice.textContent = 'Error';
+    }
+    
+    if (companyInfo) {
+        companyInfo.innerHTML = `<span style="color: #EF4444;">${message}</span>`;
+    }
+}
 
-            const macdTrace = {
-                x: data.chart_data.dates,
-                y: data.chart_data.macd,
-                type: 'scatter',
-                mode: 'lines',
-                name: 'MACD',
-                line: { color: '#3B82F6', width: 2 },
-                yaxis: 'y2'
-            };
+function formatVolume(volume) {
+    if (!volume || volume === 0) return '0';
+    if (volume >= 1e9) return `${(volume / 1e9).toFixed(1)}B`;
+    if (volume >= 1e6) return `${(volume / 1e6).toFixed(1)}M`;
+    if (volume >= 1e3) return `${(volume / 1e3).toFixed(1)}K`;
+    return volume.toLocaleString();
+}
 
-            const macdSignalTrace = {
-                x: data.chart_data.dates,
-                y: data.chart_data.macd_signal,
-                type: 'scatter',
-                mode: 'lines',
-                name: 'MACD Signal',
-                line: { color: '#F59E0B', width: 2 },
-                yaxis: 'y2'
-            };
-
-            const layout = {
-                title: {
-                    text: 'RSI & MACD Analysis',
-                    font: { color: '#E5E7EB', size: 16 }
-                },
-                xaxis: { 
-                    title: 'Date', 
-                    color: '#9CA3AF',
-                    gridcolor: '#374151'
-                },
-                yaxis: { 
-                    title: 'RSI', 
-                    color: '#9CA3AF',
-                    side: 'left',
-                    range: [0, 100],
-                    gridcolor: '#374151'
-                },
-                yaxis2: { 
-                    title: 'MACD', 
-                    color: '#9CA3AF',
-                    side: 'right',
-                    overlaying: 'y',
-                    gridcolor: '#374151'
-                },
-                plot_bgcolor: 'rgba(0,0,0,0)',
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                font: { color: '#E5E7EB' },
-                showlegend: true,
-                legend: { 
-                    x: 1.02,
-                    y: 1,
-                    xanchor: 'left',
-                    bgcolor: 'rgba(30, 41, 59, 0.8)',
-                    bordercolor: '#374151',
-                    borderwidth: 1,
-                    font: { color: '#E5E7EB', size: 11 }
-                },
-                margin: { t: 50, r: 120, b: 50, l: 60 }
-            };
-
-            const config = {
-                responsive: true,
-                displayModeBar: false,
-                showTips: false
-            };
-
-            // ✅ DIRECT RENDER - NO LOADING STATES
-            Plotly.newPlot('technicalChart', [rsiTrace, macdTrace, macdSignalTrace], layout, config);
-        }
-
-        // ✅ OPTIMIZED COUNTDOWN - MINUTES ONLY VERSION
-        async function updateCountdown() {
-            try {
-                const response = await fetch('/api/countdown');
-                const countdownData = await response.json();
-                
-                // Store for local countdown
-                lastCountdownData = countdownData;
-                
-                const countdownElement = document.getElementById('countdownDisplay');
-                const progressBar = document.getElementById('progressBar');
-                
-                if (countdownData.countdown_seconds && countdownElement) {
-                    // ✅ CONVERT TO MINUTES ONLY
-                    const totalMinutes = Math.floor(countdownData.countdown_seconds / 60);
-                    
-                    // ✅ CLEAN DISPLAY - JUST MINUTES
-                    if (totalMinutes > 0) {
-                        countdownElement.textContent = `${totalMinutes} minutes`;
-                    } else {
-                        countdownElement.textContent = "Refreshing...";
-                    }
-                }
-                
-                // ✅ SMOOTH PROGRESS BAR
-                if (progressBar && countdownData.progress_percent) {
-                    progressBar.style.width = `${countdownData.progress_percent}%`;
-                }
-                
-                // ✅ START LOCAL COUNTDOWN FOR SMOOTH UPDATES
-                startLocalCountdown(countdownData.countdown_seconds);
-                
-                // ✅ REFRESH DATA WHEN COUNTDOWN EXPIRES
-                if (countdownData.status === 'refresh_needed' || countdownData.countdown_seconds <= 0) {
-                    console.log('🔄 2-hour refresh triggered - updating ALL data');
-                    if (currentStock) {
-                        await loadStockData(currentStock);
-                    }
-                }
-                
-            } catch (error) {
-                console.error('Error updating countdown:', error);
-                // ✅ FALLBACK DISPLAY
-                const countdownElement = document.getElementById('countdownDisplay');
-                if (countdownElement) {
-                    countdownElement.textContent = "Connection error";
-                }
-            }
-        }
-
-        // ✅ LOCAL COUNTDOWN FOR SMOOTH UPDATES (NO SERVER CALLS)
-        function startLocalCountdown(initialSeconds) {
-            // Clear existing interval
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-            }
-            
-            let remainingSeconds = initialSeconds;
-            
-            countdownInterval = setInterval(() => {
-                remainingSeconds -= 1;
-                
-                const countdownElement = document.getElementById('countdownDisplay');
-                if (countdownElement && remainingSeconds > 0) {
-                    // ✅ SMOOTH MINUTES-ONLY DISPLAY
-                    const totalMinutes = Math.floor(remainingSeconds / 60);
-                    countdownElement.textContent = `${totalMinutes} minutes`;
-                    
-                    // ✅ SMOOTH PROGRESS BAR UPDATE
-                    const progressBar = document.getElementById('progressBar');
-                    if (progressBar && lastCountdownData) {
-                        const totalDuration = 2 * 60 * 60; // 2 hours in seconds
-                        const progressPercent = ((totalDuration - remainingSeconds) / totalDuration) * 100;
-                        progressBar.style.width = `${Math.max(0, Math.min(100, progressPercent))}%`;
-                    }
-                } else if (countdownElement && remainingSeconds <= 0) {
-                    countdownElement.textContent = "Refreshing...";
-                    clearInterval(countdownInterval);
-                }
-            }, 1000); // ✅ UPDATE EVERY SECOND FOR SMOOTH COUNTDOWN
-        }
-
-        // Function to load ML predictions - FIXED VERSION
-        async function loadMLPredictions(symbol) {
-            try {
-                console.log(`🧠 Loading ML predictions for ${symbol}...`);
-                
-                const response = await fetch(`/api/stock/${symbol}/ml-predictions`);
-                const data = await response.json();
-                
-                console.log('🔮 ML API Response:', data);
-                
-                if (data.error) {
-                    console.warn('ML predictions not available:', data.error);
-                    updateMLPredictionsUI(null);
-                    return;
-                }
-                
-                // ✅ FIXED: Pass the data directly to UI update
-                updateMLPredictionsUI(data);
-                
-            } catch (error) {
-                console.error('Error loading ML predictions:', error);
-                updateMLPredictionsUI(null);
-            }
-        }
-
-        // Function to update ML predictions UI - FIXED VERSION
-        function updateMLPredictionsUI(data) {
-            console.log('🔮 Updating ML UI with data:', data);
-            
-            if (!data || !data.predictions) {
-                showMLNotAvailable();
-                return;
-            }
-            
-            const predictions = data.predictions;
-            const modelStatus = data.model_status;
-            
-            // Update LSTM predictions
-            updateLSTMPredictions(predictions.lstm, modelStatus.lstm_available);
-            
-            // Update Ensemble predictions  
-            updateEnsemblePredictions(predictions.ensemble, modelStatus.ensemble_ready);
-        }
-
-        // Function to update LSTM predictions - FIXED VERSION
-        function updateLSTMPredictions(lstmData, isAvailable) {
-            console.log('🧠 Updating LSTM with:', lstmData);
-            
-            const statusElement = document.getElementById('lstmStatus');
-            
-            if (!isAvailable || !lstmData || lstmData.status !== 'ready') {
-                statusElement.textContent = 'Not Trained';
-                statusElement.className = 'ml-status ml-status-not-ready';
-                
-                // Reset prediction cards
-                document.getElementById('lstm1dayPrice').textContent = '--';
-                document.getElementById('lstm1dayReturn').textContent = '--';
-                document.getElementById('lstm1dayConfidence').textContent = 'Model not trained';
-                document.getElementById('lstm7dayPrice').textContent = '--';
-                document.getElementById('lstm7dayReturn').textContent = '--';
-                document.getElementById('lstm7dayConfidence').textContent = 'Model not trained';
-                document.getElementById('lstm30dayPrice').textContent = '--';
-                document.getElementById('lstm30dayReturn').textContent = '--';
-                document.getElementById('lstm30dayConfidence').textContent = 'Model not trained';
-                return;
-            }
-            
-            statusElement.textContent = 'Ready';
-            statusElement.className = 'ml-status ml-status-ready';
-            
-            // ✅ FIXED: Handle the actual data structure from API
-            const predictions = lstmData.predictions || {};
-            
-            // Update 1-day prediction
-            if (predictions['1']) {
-                const pred1 = predictions['1'];
-                const returnPercent = pred1.predicted_return || 0;
-                const colorClass = returnPercent >= 0 ? 'positive' : 'negative';
-                
-                document.getElementById('lstm1dayPrice').textContent = `$${pred1.predicted_price}`;
-                document.getElementById('lstm1dayPrice').className = `prediction-price ${colorClass}`;
-                document.getElementById('lstm1dayReturn').textContent = `${returnPercent > 0 ? '+' : ''}${returnPercent.toFixed(2)}%`;
-                document.getElementById('lstm1dayReturn').className = `prediction-return ${colorClass}`;
-                document.getElementById('lstm1dayConfidence').textContent = `${pred1.confidence}% confidence`;
-            }
-            
-            // Update 7-day prediction
-            if (predictions['7']) {
-                const pred7 = predictions['7'];
-                const returnPercent = pred7.predicted_return || 0;
-                const colorClass = returnPercent >= 0 ? 'positive' : 'negative';
-                
-                document.getElementById('lstm7dayPrice').textContent = `$${pred7.predicted_price}`;
-                document.getElementById('lstm7dayPrice').className = `prediction-price ${colorClass}`;
-                document.getElementById('lstm7dayReturn').textContent = `${returnPercent > 0 ? '+' : ''}${returnPercent.toFixed(2)}%`;
-                document.getElementById('lstm7dayReturn').className = `prediction-return ${colorClass}`;
-                document.getElementById('lstm7dayConfidence').textContent = `${pred7.confidence}% confidence`;
-            }
-            
-            // Update 30-day prediction
-            if (predictions['30']) {
-                const pred30 = predictions['30'];
-                const returnPercent = pred30.predicted_return || 0;
-                const colorClass = returnPercent >= 0 ? 'positive' : 'negative';
-                
-                document.getElementById('lstm30dayPrice').textContent = `$${pred30.predicted_price}`;
-                document.getElementById('lstm30dayPrice').className = `prediction-price ${colorClass}`;
-                document.getElementById('lstm30dayReturn').textContent = `${returnPercent > 0 ? '+' : ''}${returnPercent.toFixed(2)}%`;
-                document.getElementById('lstm30dayReturn').className = `prediction-return ${colorClass}`;
-                document.getElementById('lstm30dayConfidence').textContent = `${pred30.confidence}% confidence`;
-            }
-            
-            console.log('✅ LSTM UI updated successfully');
-        }
-
-        // Function to update Ensemble predictions - FIXED VERSION
-        function updateEnsemblePredictions(ensembleData, isAvailable) {
-            console.log('🎯 Updating Ensemble with:', ensembleData);
-            
-            const statusElement = document.getElementById('ensembleStatus');
-            
-            if (!isAvailable || !ensembleData || ensembleData.status !== 'ready') {
-                statusElement.textContent = 'Not Ready';
-                statusElement.className = 'ml-status ml-status-not-ready';
-                
-                // Reset prediction cards
-                document.getElementById('ensemble1dayPrice').textContent = '--';
-                document.getElementById('ensemble1dayReturn').textContent = '--';
-                document.getElementById('ensemble1dayConfidence').textContent = 'Not available';
-                document.getElementById('ensemble7dayPrice').textContent = '--';
-                document.getElementById('ensemble7dayReturn').textContent = '--';
-                document.getElementById('ensemble7dayConfidence').textContent = 'Not available';
-                document.getElementById('ensemble30dayPrice').textContent = '--';
-                document.getElementById('ensemble30dayReturn').textContent = '--';
-                document.getElementById('ensemble30dayConfidence').textContent = 'Not available';
-                return;
-            }
-            
-            statusElement.textContent = 'Ready';
-            statusElement.className = 'ml-status ml-status-ready';
-            
-            // ✅ FIXED: Handle the actual data structure from API
-            const predictions = ensembleData.predictions || {};
-            
-            // Update 1-day prediction
-            if (predictions['1_day']) {
-                const pred1 = predictions['1_day'];
-                const returnPercent = pred1.predicted_return || 0;
-                const colorClass = returnPercent >= 0 ? 'positive' : 'negative';
-                
-                document.getElementById('ensemble1dayPrice').textContent = `$${pred1.predicted_price}`;
-                document.getElementById('ensemble1dayPrice').className = `prediction-price ${colorClass}`;
-                document.getElementById('ensemble1dayReturn').textContent = `${returnPercent > 0 ? '+' : ''}${returnPercent.toFixed(2)}%`;
-                document.getElementById('ensemble1dayReturn').className = `prediction-return ${colorClass}`;
-                document.getElementById('ensemble1dayConfidence').textContent = `${pred1.confidence}% • ${pred1.model_type || 'Ensemble'}`;
-            }
-            
-            // Update 7-day prediction
-            if (predictions['7_day']) {
-                const pred7 = predictions['7_day'];
-                const returnPercent = pred7.predicted_return || 0;
-                const colorClass = returnPercent >= 0 ? 'positive' : 'negative';
-                
-                document.getElementById('ensemble7dayPrice').textContent = `$${pred7.predicted_price}`;
-                document.getElementById('ensemble7dayPrice').className = `prediction-price ${colorClass}`;
-                document.getElementById('ensemble7dayReturn').textContent = `${returnPercent > 0 ? '+' : ''}${returnPercent.toFixed(2)}%`;
-                document.getElementById('ensemble7dayReturn').className = `prediction-return ${colorClass}`;
-                document.getElementById('ensemble7dayConfidence').textContent = `${pred7.confidence}% • ${pred7.model_type || 'Ensemble'}`;
-            }
-            
-            // Update 30-day prediction
-            if (predictions['30_day']) {
-                const pred30 = predictions['30_day'];
-                const returnPercent = pred30.predicted_return || 0;
-                const colorClass = returnPercent >= 0 ? 'positive' : 'negative';
-                
-                document.getElementById('ensemble30dayPrice').textContent = `$${pred30.predicted_price}`;
-                document.getElementById('ensemble30dayPrice').className = `prediction-price ${colorClass}`;
-                document.getElementById('ensemble30dayReturn').textContent = `${returnPercent > 0 ? '+' : ''}${returnPercent.toFixed(2)}%`;
-                document.getElementById('ensemble30dayReturn').className = `prediction-return ${colorClass}`;
-                document.getElementById('ensemble30dayConfidence').textContent = `${pred30.confidence}% • ${pred30.model_type || 'Ensemble'}`;
-            }
-            
-            console.log('✅ Ensemble UI updated successfully');
-        }
-
-        // Enhanced function to train models
-        async function trainModels() {
-            if (!currentStock) {
-                alert('Please select a stock first');
-                return;
-            }
-            
-            const button = document.querySelector('.train-btn');
-            const originalText = button.innerHTML;
-            
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Training...';
-            
-            // Update status to training
-            document.getElementById('lstmStatus').textContent = 'Training...';
-            document.getElementById('lstmStatus').className = 'ml-status ml-status-training';
-            document.getElementById('ensembleStatus').textContent = 'Training...';
-            document.getElementById('ensembleStatus').className = 'ml-status ml-status-training';
-            
-            try {
-                const response = await fetch(`/api/stock/${currentStock}/train-model`, {
-                    method: 'POST'
-                });
-                
-                const result = await response.json();
-                
-                if (result.error) {
-                    alert(`Training failed: ${result.error}`);
-                } else {
-                    alert(`Training completed for ${currentStock}!\n${result.message}`);
-                    // Reload ML predictions
-                    await loadMLPredictions(currentStock);
-                }
-                
-            } catch (error) {
-                console.error('Training error:', error);
-                alert('Training failed. Check console for details.');
-            } finally {
-                button.disabled = false;
-                button.innerHTML = originalText;
-            }
-        }
-
-        // Function to show ML not available
-        function showMLNotAvailable() {
-            const container = document.getElementById('mlPredictionsContainer');
-            container.innerHTML = `
-                <div style="text-align: center; padding: 2rem;">
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-triangle" style="margin-bottom: 1rem; font-size: 2rem;"></i><br>
-                        ML predictions are not available.<br>
-                        <small>Models may need training or system is not ready.</small>
-                    </div>
-                </div>
-            `;
-        }
-
-        function updatePredictions(data) {
-            const grid = document.getElementById('predictionsGrid');
-            grid.innerHTML = '';
-            
-            if (data && data.predictions) {
-                Object.entries(data.predictions).forEach(([timeframe, pred]) => {
-                    const card = document.createElement('div');
-                    card.className = 'prediction-card';
-                    
-                    const days = timeframe.replace('_day', '').replace('d', '');
-                    const returnPercent = pred.predicted_return || 0;
-                    const direction = returnPercent >= 0 ? 'positive' : 'negative';
-                    
-                    card.innerHTML = `
-                        <div class="prediction-timeframe">${pred.timeframe || days + ' Day'} Prediction</div>
-                        <div class="prediction-price ${direction}">$${pred.predicted_price}</div>
-                        <div class="prediction-return ${direction}">${returnPercent > 0 ? '+' : ''}${returnPercent.toFixed(2)}%</div>
-                        <div class="prediction-confidence">${pred.confidence}% Confidence</div>
-                        <div class="prediction-details">
-                            Direction: <strong>${pred.direction || (returnPercent >= 0 ? 'UP' : 'DOWN')}</strong><br>
-                            Strength: ${pred.strength || 'MODERATE'}<br>
-                            Model: ${pred.model_type || 'Technical Analysis'}
-                        </div>
-                    `;
-                    
-                    grid.appendChild(card);
-                });
-            } else {
-                grid.innerHTML = '<div class="error-message">Predictions not available</div>';
-            }
-        }
-
-        function updateTradingSignals(data) {
-            const container = document.getElementById('signalsContainer');
-            container.innerHTML = '';
-            
-            if (data && data.signals && data.signals.individual_signals) {
-                const signals = data.signals.individual_signals;
-                
-                // ✅ UPDATED: Create individual signal cards with better structure
-                Object.entries(signals).forEach(([indicator, signal]) => {
-                    const card = document.createElement('div');
-                    let signalClass = 'signal-hold';
-                    
-                    if (signal.toLowerCase().includes('buy')) {
-                        signalClass = 'signal-buy';
-                    } else if (signal.toLowerCase().includes('sell')) {
-                        signalClass = 'signal-sell';
-                    }
-                    
-                    card.className = `signal-card ${signalClass}`;
-                    
-                    // ✅ NEW: Better HTML structure with separate indicator name and signal value
-                    card.innerHTML = `
-                        <div class="signal-indicator-name">${indicator.replace('_', ' ').toUpperCase()}</div>
-                        <div class="signal-value">${signal}</div>
-                    `;
-                    
-                    container.appendChild(card);
-                });
-                
-                // ✅ UPDATED: Overall recommendation with better styling
-                if (data.signals.recommendation) {
-                    const overallCard = document.createElement('div');
-                    let recClass = 'signal-hold';
-                    
-                    if (data.signals.recommendation.toLowerCase().includes('buy')) {
-                        recClass = 'signal-buy';
-                    } else if (data.signals.recommendation.toLowerCase().includes('sell')) {
-                        recClass = 'signal-sell';
-                    }
-                    
-                    overallCard.className = `signal-card ${recClass} overall-signal`;
-                    overallCard.innerHTML = `
-                        <div class="signal-indicator-name">OVERALL RECOMMENDATION</div>
-                        <div class="signal-value">${data.signals.recommendation}</div>
-                        <div class="overall-details">
-                            Confidence: ${data.signals.confidence}% • Strength: ${data.signals.signal_strength}
-                        </div>
-                    `;
-                    
-                    container.appendChild(overallCard);
-                }
-            } else {
-                container.innerHTML = '<div class="error-message">Trading signals not available</div>';
-            }
-        }
-
-        function updateTechnicalIndicators(data) {
-            const grid = document.getElementById('indicatorsGrid');
-            grid.innerHTML = '';
-            
-            if (!data) {
-                grid.innerHTML = '<div class="error-message">Technical indicators not available</div>';
-                return;
-            }
-            
-            const indicators = [
-                { name: 'RSI (14)', value: data.rsi, format: 'decimal' },
-                { name: 'MACD', value: data.macd, format: 'decimal' },
-                { name: 'MACD Signal', value: data.macd_signal, format: 'decimal' },
-                { name: 'SMA 20', value: data.sma_20, format: 'price' },
-                { name: 'SMA 50', value: data.sma_50, format: 'price' },
-                { name: 'SMA 200', value: data.sma_200, format: 'price' },
-                { name: 'EMA 12', value: data.ema_12, format: 'price' },
-                { name: 'EMA 26', value: data.ema_26, format: 'price' },
-                { name: 'BB Upper', value: data.bb_upper, format: 'price' },
-                { name: 'BB Lower', value: data.bb_lower, format: 'price' },
-                { name: 'ATR', value: data.atr, format: 'decimal' },
-                { name: 'OBV', value: data.obv, format: 'integer' },
-                { name: 'Support Level', value: data.support_level, format: 'price' },
-                { name: 'Resistance Level', value: data.resistance_level, format: 'price' },
-                { name: 'Volatility (20d)', value: data.volatility_20, format: 'decimal' },
-                { name: 'Volume Ratio', value: data.volume_ratio, format: 'decimal' }
-            ];
-            
-            indicators.forEach(indicator => {
-                if (indicator.value !== null && indicator.value !== undefined) {
-                    const div = document.createElement('div');
-                    div.className = 'indicator';
-                    
-                    let formattedValue = indicator.value;
-                    if (indicator.format === 'price') {
-                        formattedValue = `$${indicator.value.toFixed(2)}`;
-                    } else if (indicator.format === 'decimal') {
-                        formattedValue = indicator.value.toFixed(4);
-                    } else if (indicator.format === 'integer') {
-                        formattedValue = Math.round(indicator.value).toLocaleString();
-                    }
-                    
-                    div.innerHTML = `
-                        <span class="indicator-name">${indicator.name}</span>
-                        <span class="indicator-value">${formattedValue}</span>
-                    `;
-                    grid.appendChild(div);
-                }
-            });
-        }
-
-        function formatVolume(volume) {
-            if (!volume || volume === 0) return '0';
-            if (volume >= 1e9) return `${(volume / 1e9).toFixed(1)}B`;
-            if (volume >= 1e6) return `${(volume / 1e6).toFixed(1)}M`;
-            if (volume >= 1e3) return `${(volume / 1e3).toFixed(1)}K`;
-            return volume.toLocaleString();
-        }
-
-        // ✅ UPDATED LOADING FUNCTIONS - NO MORE LOADING INDICATORS
-        function showLoading() {
-            console.log('Data loading...');
-        }
-
-        function hideLoading() {
-            console.log('Data loaded');
-        }
-
-        function showError(message) {
-            console.error(message);
-            const elements = ['priceChart', 'technicalChart'];
-            elements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.innerHTML = `<div class="error-message">${message}</div>`;
-                }
-            });
-        }
+function formatMarketCap(marketCap) {
+    if (!marketCap || marketCap === 0) return 'N/A';
+    if (marketCap >= 1e12) return `$${(marketCap / 1e12).toFixed(1)}T`;
+    if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(1)}B`;
+    if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(1)}M`;
+    return `$${marketCap.toLocaleString()}`;
+}
     </script>
 </body>
 </html>
