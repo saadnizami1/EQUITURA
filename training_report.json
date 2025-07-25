@@ -1,0 +1,117 @@
+{
+  "training_date": "2025-07-14T12:43:44.995052",
+  "tensorflow_version": "2.13.0",
+  "total_stocks": 18,
+  "successful": 18,
+  "failed": 0,
+  "results": [
+    {
+      "symbol": "ORCL",
+      "status": "success",
+      "message": "Model trained with loss: 0.026808",
+      "data_points": 81
+    },
+    {
+      "symbol": "AMD",
+      "status": "success",
+      "message": "Model trained with loss: 0.023774",
+      "data_points": 81
+    },
+    {
+      "symbol": "INTC",
+      "status": "success",
+      "message": "Model trained with loss: 0.018782",
+      "data_points": 81
+    },
+    {
+      "symbol": "BAC",
+      "status": "success",
+      "message": "Model trained with loss: 0.050855",
+      "data_points": 81
+    },
+    {
+      "symbol": "WFC",
+      "status": "success",
+      "message": "Model trained with loss: 0.026562",
+      "data_points": 81
+    },
+    {
+      "symbol": "AXP",
+      "status": "success",
+      "message": "Model trained with loss: 0.032198",
+      "data_points": 81
+    },
+    {
+      "symbol": "PYPL",
+      "status": "success",
+      "message": "Model trained with loss: 0.014214",
+      "data_points": 81
+    },
+    {
+      "symbol": "DIS",
+      "status": "success",
+      "message": "Model trained with loss: 0.067189",
+      "data_points": 81
+    },
+    {
+      "symbol": "SBUX",
+      "status": "success",
+      "message": "Model trained with loss: 0.043971",
+      "data_points": 81
+    },
+    {
+      "symbol": "F",
+      "status": "success",
+      "message": "Model trained with loss: 0.021871",
+      "data_points": 81
+    },
+    {
+      "symbol": "GM",
+      "status": "success",
+      "message": "Model trained with loss: 0.030736",
+      "data_points": 81
+    },
+    {
+      "symbol": "KO",
+      "status": "success",
+      "message": "Model trained with loss: 0.032854",
+      "data_points": 81
+    },
+    {
+      "symbol": "PG",
+      "status": "success",
+      "message": "Model trained with loss: 0.011635",
+      "data_points": 81
+    },
+    {
+      "symbol": "JNJ",
+      "status": "success",
+      "message": "Model trained with loss: 0.021803",
+      "data_points": 81
+    },
+    {
+      "symbol": "UNH",
+      "status": "success",
+      "message": "Model trained with loss: 0.000435",
+      "data_points": 81
+    },
+    {
+      "symbol": "LMT",
+      "status": "success",
+      "message": "Model trained with loss: 0.040097",
+      "data_points": 81
+    },
+    {
+      "symbol": "APD",
+      "status": "success",
+      "message": "Model trained with loss: 0.016974",
+      "data_points": 81
+    },
+    {
+      "symbol": "BABA",
+      "status": "success",
+      "message": "Model trained with loss: 0.002762",
+      "data_points": 81
+    }
+  ]
+}

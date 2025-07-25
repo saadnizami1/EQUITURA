@@ -1,0 +1,56 @@
+{
+  "symbol": "MSFT",
+  "analysis_date": "2025-07-06T20:25:34.402706",
+  "days_analyzed": 7,
+  "total_articles": 20,
+  "average_sentiment": 0.18840886243386246,
+  "weighted_sentiment": 0.19988851720050058,
+  "sentiment_trend": "bullish",
+  "confidence": 0.21990886243386246,
+  "positive_articles": 13,
+  "negative_articles": 1,
+  "neutral_articles": 6,
+  "recent_headlines": [
+    {
+      "headline": "Nvidia vs. Microsoft Stock: Which Will Be the First $4 Trillion Company?",
+      "sentiment": "neutral",
+      "polarity": -0.07500000000000001,
+      "datetime": "2025-07-06T16:15:00",
+      "source": "Yahoo"
+    },
+    {
+      "headline": "Amazon: Don't Wait Till It Enters Beast Mode",
+      "sentiment": "neutral",
+      "polarity": 0.0,
+      "datetime": "2025-07-06T14:30:00",
+      "source": "SeekingAlpha"
+    },
+    {
+      "headline": "IGA: Strong Performance From Foreign Exposure And Fully-Covered Distribution",
+      "sentiment": "positive",
+      "polarity": 0.15416666666666665,
+      "datetime": "2025-07-06T13:44:53",
+      "source": "SeekingAlpha"
+    },
+    {
+      "headline": "Amazon vs. Microsoft: Which Cloud Computing Giant Is the Better Buy?",
+      "sentiment": "positive",
+      "polarity": 0.3333333333333333,
+      "datetime": "2025-07-06T12:35:00",
+      "source": "Yahoo"
+    },
+    {
+      "headline": "What To Expect From the Magnificent Seven in the Second Half of 2025",
+      "sentiment": "positive",
+      "polarity": 0.39866666666666667,
+      "datetime": "2025-07-06T12:00:00",
+      "source": "Yahoo"
+    }
+  ],
+  "sentiment_score": 19.988851720050057,
+  "sentiment_distribution": {
+    "positive": 65.0,
+    "negative": 5.0,
+    "neutral": 30.0
+  }
+}

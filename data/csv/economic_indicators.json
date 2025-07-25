@@ -1,0 +1,183 @@
+{
+  "analysis_date": "2025-07-06T20:26:47.445087",
+  "indicators": {
+    "federal_funds_rate": {
+      "indicator": "Federal Funds Rate",
+      "current_value": 4.33,
+      "unit": "percent",
+      "last_updated": "2025-06-01",
+      "change_from_previous": 0.0,
+      "trend": "stable",
+      "impact_on_stocks": "neutral",
+      "raw_data": [
+        {
+          "date": "2025-06-01",
+          "value": "4.33"
+        },
+        {
+          "date": "2025-05-01",
+          "value": "4.33"
+        },
+        {
+          "date": "2025-04-01",
+          "value": "4.33"
+        },
+        {
+          "date": "2025-03-01",
+          "value": "4.33"
+        },
+        {
+          "date": "2025-02-01",
+          "value": "4.33"
+        },
+        {
+          "date": "2025-01-01",
+          "value": "4.33"
+        }
+      ]
+    },
+    "unemployment_rate": {
+      "indicator": "Unemployment Rate",
+      "current_value": 4.1,
+      "unit": "percent",
+      "last_updated": "2025-06-01",
+      "change_from_previous": -0.10000000000000053,
+      "trend": "falling",
+      "impact_on_stocks": "positive",
+      "raw_data": [
+        {
+          "date": "2025-06-01",
+          "value": "4.1"
+        },
+        {
+          "date": "2025-05-01",
+          "value": "4.2"
+        },
+        {
+          "date": "2025-04-01",
+          "value": "4.2"
+        },
+        {
+          "date": "2025-03-01",
+          "value": "4.2"
+        },
+        {
+          "date": "2025-02-01",
+          "value": "4.1"
+        },
+        {
+          "date": "2025-01-01",
+          "value": "4.0"
+        }
+      ]
+    },
+    "inflation_rate": {
+      "indicator": "Consumer Price Index (Inflation)",
+      "current_value": 2.32036285509667,
+      "unit": "percent (YoY)",
+      "last_updated": "2025-05-01",
+      "change_from_previous": 0.20885612306923707,
+      "trend": "rising",
+      "impact_on_stocks": "neutral",
+      "raw_data": [
+        {
+          "date": "2025-05-01",
+          "value": "321.465"
+        },
+        {
+          "date": "2025-04-01",
+          "value": "320.795"
+        },
+        {
+          "date": "2025-03-01",
+          "value": "319.799"
+        },
+        {
+          "date": "2025-02-01",
+          "value": "319.082"
+        },
+        {
+          "date": "2025-01-01",
+          "value": "317.671"
+        },
+        {
+          "date": "2024-12-01",
+          "value": "315.605"
+        }
+      ]
+    },
+    "gdp_growth": {
+      "indicator": "Real GDP Growth",
+      "current_value": -1.2063771913795125,
+      "unit": "percent (YoY)",
+      "last_updated": "2025-01-01",
+      "change_from_previous": -4.243196958705055,
+      "trend": "contracting",
+      "impact_on_stocks": "negative",
+      "raw_data": [
+        {
+          "date": "2025-01-01",
+          "value": "5746.992"
+        },
+        {
+          "date": "2024-10-01",
+          "value": "6001.654"
+        },
+        {
+          "date": "2024-07-01",
+          "value": "5866.841"
+        },
+        {
+          "date": "2024-04-01",
+          "value": "5817.169"
+        }
+      ]
+    },
+    "treasury_yield": {
+      "indicator": "10-Year Treasury Yield",
+      "current_value": 4.38,
+      "unit": "percent",
+      "last_updated": "2025-06-01",
+      "change_from_previous": -0.040000000000000036,
+      "trend": "stable",
+      "impact_on_stocks": "neutral",
+      "raw_data": [
+        {
+          "date": "2025-06-01",
+          "value": "4.38"
+        },
+        {
+          "date": "2025-05-01",
+          "value": "4.42"
+        },
+        {
+          "date": "2025-04-01",
+          "value": "4.28"
+        },
+        {
+          "date": "2025-03-01",
+          "value": "4.28"
+        },
+        {
+          "date": "2025-02-01",
+          "value": "4.45"
+        },
+        {
+          "date": "2025-01-01",
+          "value": "4.63"
+        }
+      ]
+    }
+  },
+  "economic_sentiment": {
+    "score": 60.45905702155122,
+    "sentiment": "positive",
+    "individual_scores": {
+      "fed_rate": 56.7,
+      "unemployment": 67.2,
+      "gdp": 37.93622808620488,
+      "inflation": 80
+    }
+  },
+  "summary": "Overall Economic Sentiment: POSITIVE (Score: 60.5/100) | Fed Funds Rate: 4.33% (stable) | Unemployment: 4.1% (falling) | GDP Growth: -1.2% (contracting) | Inflation: 2.3% (rising)"
+}

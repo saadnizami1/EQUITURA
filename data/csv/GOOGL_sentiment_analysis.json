@@ -1,0 +1,56 @@
+{
+  "symbol": "GOOGL",
+  "analysis_date": "2025-07-06T20:25:41.049680",
+  "days_analyzed": 7,
+  "total_articles": 20,
+  "average_sentiment": 0.1274819324194324,
+  "weighted_sentiment": 0.11661745698083503,
+  "sentiment_trend": "bullish",
+  "confidence": 0.19331526575276575,
+  "positive_articles": 11,
+  "negative_articles": 2,
+  "neutral_articles": 7,
+  "recent_headlines": [
+    {
+      "headline": "IGA: Strong Performance From Foreign Exposure And Fully-Covered Distribution",
+      "sentiment": "positive",
+      "polarity": 0.15416666666666665,
+      "datetime": "2025-07-06T13:44:53",
+      "source": "SeekingAlpha"
+    },
+    {
+      "headline": "The Volkswagen Robotaxi That Wants to Rival Waymo and Tesla",
+      "sentiment": "neutral",
+      "polarity": 0.06666666666666667,
+      "datetime": "2025-07-06T05:00:00",
+      "source": "Yahoo"
+    },
+    {
+      "headline": "Why Wall Street Still Trusts Alphabet\u2019s (GOOGL) Google Search, Even With ChatGPT on the Rise",
+      "sentiment": "negative",
+      "polarity": -0.4,
+      "datetime": "2025-07-05T19:58:08",
+      "source": "Yahoo"
+    },
+    {
+      "headline": "As Amazon Doubles Down on Robotaxis, Is AMZN Stock a Buy?",
+      "sentiment": "positive",
+      "polarity": 0.17222222222222222,
+      "datetime": "2025-07-05T19:00:02",
+      "source": "Yahoo"
+    },
+    {
+      "headline": "3 \"Magnificent Seven\" Stocks That Will Crush the Market",
+      "sentiment": "positive",
+      "polarity": 0.2947811447811448,
+      "datetime": "2025-07-05T12:30:00",
+      "source": "Yahoo"
+    }
+  ],
+  "sentiment_score": 11.661745698083504,
+  "sentiment_distribution": {
+    "positive": 55.00000000000001,
+    "negative": 10.0,
+    "neutral": 35.0
+  }
+}

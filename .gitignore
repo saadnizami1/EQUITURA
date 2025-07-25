@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+equitura_env/
+venv/
+.env
+data/cache/*.json
+saved_models/*/
+logs/
+.DS_Store

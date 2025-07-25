@@ -1,0 +1,56 @@
+{
+  "symbol": "AAPL",
+  "analysis_date": "2025-07-06T20:25:27.823563",
+  "days_analyzed": 7,
+  "total_articles": 20,
+  "average_sentiment": 0.16420442949907235,
+  "weighted_sentiment": 0.18078513745597363,
+  "sentiment_trend": "bullish",
+  "confidence": 0.20128776283240568,
+  "positive_articles": 14,
+  "negative_articles": 2,
+  "neutral_articles": 4,
+  "recent_headlines": [
+    {
+      "headline": "AAPL CLASS ACTION ALERT: Kessler Topaz Meltzer & Check, LLP Reminds Apple Inc. Shareholders of Securities Fraud Class Action Lawsuit",
+      "sentiment": "neutral",
+      "polarity": 0.025,
+      "datetime": "2025-07-06T14:01:06",
+      "source": "Finnhub"
+    },
+    {
+      "headline": "IGA: Strong Performance From Foreign Exposure And Fully-Covered Distribution",
+      "sentiment": "positive",
+      "polarity": 0.15416666666666665,
+      "datetime": "2025-07-06T13:44:53",
+      "source": "SeekingAlpha"
+    },
+    {
+      "headline": "DGRO: Much Smarter Than A High-Yield ETF",
+      "sentiment": "positive",
+      "polarity": 0.25,
+      "datetime": "2025-07-06T04:04:11",
+      "source": "SeekingAlpha"
+    },
+    {
+      "headline": "Secret Super Stocks: If You Invested $1K in These 3 Companies 5 Years Ago, See What You\u2019d Have Today",
+      "sentiment": "positive",
+      "polarity": 0.19710884353741495,
+      "datetime": "2025-07-06T02:01:19",
+      "source": "Yahoo"
+    },
+    {
+      "headline": "Dow Jones Futures: Trump Tariffs Back In Focus; Tesla Rival Uber Leads 5 Stocks In Buy Zones",
+      "sentiment": "neutral",
+      "polarity": 0.0,
+      "datetime": "2025-07-05T23:38:00",
+      "source": "Yahoo"
+    }
+  ],
+  "sentiment_score": 18.078513745597363,
+  "sentiment_distribution": {
+    "positive": 70.0,
+    "negative": 10.0,
+    "neutral": 20.0
+  }
+}
