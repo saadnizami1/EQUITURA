@@ -1259,6 +1259,11 @@ def get_system_info():
         logger.error(f"Error getting system info: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/health')
+def health_check():
+    """Health check endpoint for Railway"""
+    return {'status': 'healthy', 'message': 'EQUITURA AI Platform is running!'}, 200
+
 if __name__ == '__main__':
     print("🚀 VESTARA AI STOCK PREDICTION PLATFORM")
     print("=" * 70)
@@ -1270,21 +1275,15 @@ if __name__ == '__main__':
     print("🎓 College application ready with professional architecture")
     print("=" * 70)
     
-    # ✅ PRODUCTION-READY SERVER START
-    if config.ENVIRONMENT == 'production':
-        # Railway production mode
-        print("🚀 PRODUCTION MODE - Railway deployment")
-        app.run(
-            host=config.HOST,  # 0.0.0.0 for Railway
-            port=config.PORT,  # Railway assigns port via environment
-            debug=False,       # No debug in production
-            threaded=True      # Handle multiple requests
-        )
-    else:
-        # Development mode
-        print("🛠️ DEVELOPMENT MODE")
-        app.run(
-            host=config.HOST,  # localhost for development
-            port=config.PORT,  # 5000 for development
-            debug=True         # Debug mode for development
-        )
+    # Railway production configuration
+    import os
+    port = int(os.environ.get('PORT', 5000))
+    host = '0.0.0.0'
+    
+    print(f"🚀 Starting on {host}:{port}")
+    app.run(
+        host=host,
+        port=port,
+        debug=False,
+        threaded=True
+    )
