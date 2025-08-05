@@ -1,9 +1,9 @@
 {
-  "last_training_date": "2025-07-25T15:41:48.562633",
+  "last_training_date": "2025-08-05T12:52:51.405610",
   "successful_stocks": 0,
   "total_stocks": 37,
   "success_rate": "0.0%",
-  "next_training_date": "2025-07-27T02:00:00",
+  "next_training_date": "2025-08-10T02:00:00",
   "cache_duration_days": 7,
   "system_status": "active"
 }
