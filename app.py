@@ -1259,11 +1259,6 @@ def get_system_info():
         logger.error(f"Error getting system info: {e}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/health')
-def health_check():
-    """Health check endpoint for Railway"""
-    return {'status': 'healthy', 'message': 'EQUITURA AI Platform is running!'}, 200
-
 if __name__ == '__main__':
     print("🚀 VESTARA AI STOCK PREDICTION PLATFORM")
     print("=" * 70)
